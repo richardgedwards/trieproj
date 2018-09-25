@@ -1,6 +1,5 @@
 #include "trie.h"
 
-
 Trie::Trie() {
 // default constructor
     _root = new Node;
@@ -52,24 +51,24 @@ Node* Trie::remove(Node* node) {
 }
 
 
-void Trie::addWord(const std::string& word)
-{
+void Trie::addWord(const std::string& word) {
 // add a word to the local Trie
     unsigned int indx;
     Node* local = _root;
     for (unsigned int i=0; i<word.length(); i++){
         indx = word[i]-'a';
-        if(local->_children[indx] == nullptr)
-            local->_children[indx] = new Node;
-        local = local->_children[indx];
+        if (indx>=0 && indx < Node::ALPHABETSIZE) {
+            if(local->_children[indx] == nullptr)
+                local->_children[indx] = new Node;
+            local = local->_children[indx];
+        }
     }
     local->_isWord = true;
 }
 
 
-bool Trie::isWord(const std::string& word)
-{
-// return a true if word is in the Trie
+bool Trie::isWord(const std::string& word) {
+// return true if the word is in the Trie
     unsigned int indx;
     Node* local = _root;
     for (unsigned int i=0; i<word.length(); i++){
@@ -82,7 +81,40 @@ bool Trie::isWord(const std::string& word)
 }
 
 
-std::vector<std::string> Trie::prefix(const std::string&)
-{
-    return std::vector<std::string>();
+Node* Trie::findPrefixNode(const std::string& prefix) {
+// return the node at the end of the prefix
+    unsigned int indx;
+    Node* local = _root;
+    for (unsigned int i=0; i<prefix.length(); i++){
+        indx = prefix[i]-'a';
+        if(local->_children[indx] == nullptr)
+            return nullptr;
+        local = local->_children[indx];
+    }
+    return local;
+}
+
+
+void Trie::findWords(Node* node) {
+    for(unsigned int i=0; i<Node::ALPHABETSIZE; i++){
+        if(node->_children[i] != nullptr) {
+            char temp[2] = {char(i+'a'), '\0'};
+            _word.append(temp);
+            if(node->_children[i]->_isWord){
+                _words.push_back(_word);
+            }
+            findWords(node->_children[i]);
+        }
+    }
+    _word = _prefix;
+}
+
+
+std::vector<std::string> Trie::findAllWordsStartingWithPrefix(const std::string& prefix) {
+// return a vector of strings that have the same prefix
+    _word = prefix;
+    _prefix = prefix;
+    Node* node = findPrefixNode(prefix);
+    findWords(node);
+    return _words;
 }

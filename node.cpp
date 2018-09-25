@@ -1,21 +1,21 @@
 #include "node.h"
 
-Node::Node() : _isWord(false)
-{
+Node::Node() : _isWord(false) {
+// constructor
     _children = new Node*[ALPHABETSIZE];
     for (unsigned int i=0; i<ALPHABETSIZE; i++)
         _children[i] = nullptr;
 }
 
 
-Node::~Node()
-{
+Node::~Node() {
+// destructor
     delete [] _children;
 }
 
 
-Node::Node(Node& node)
-{
+Node::Node(Node& node) {
+// copy constructor
     _isWord = node._isWord;
     _children = new Node*[ALPHABETSIZE];
     for (unsigned int i=0; i<ALPHABETSIZE; i++)
@@ -23,8 +23,8 @@ Node::Node(Node& node)
 }
 
 
-Node& Node::operator= (Node& node)
-{
+Node& Node::operator= (Node& node) {
+// overloaded assignment
     _isWord = node._isWord;
     for (unsigned int i=0; i<ALPHABETSIZE; i++)
         _children[i] = node._children[i];
